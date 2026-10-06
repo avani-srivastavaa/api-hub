@@ -1,0 +1,367 @@
+{
+  "info": {
+    "name": "Universal AI API Hub",
+    "description": "Complete API documentation and testing collection for the AI Connector Hub",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "System",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "Database Test",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/db-test",
+              "host": ["{{base_url}}"],
+              "path": ["api", "db-test"]
+            }
+          }
+        },
+        {
+          "name": "System Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/system",
+              "host": ["{{base_url}}"],
+              "path": ["api", "system"]
+            }
+          }
+        },
+        {
+          "name": "API Overview",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api",
+              "host": ["{{base_url}}"],
+              "path": ["api"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Connectors CRUD",
+      "item": [
+        {
+          "name": "List All Connectors",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/connectors",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "connectors"]
+            }
+          }
+        },
+        {
+          "name": "Create Connector",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Connector\",\n  \"description\": \"A sample connector\",\n  \"provider\": \"anthropic\",\n  \"model\": \"claude-3-5-sonnet-20241022\",\n  \"system_prompt\": \"You are a helpful assistant.\",\n  \"input_schema\": [\n    {\n      \"name\": \"text\",\n      \"type\": \"text\",\n      \"required\": true,\n      \"description\": \"Input text\"\n    }\n  ],\n  \"output_schema\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"result\": { \"type\": \"string\" }\n    }\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/connectors",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "connectors"]
+            }
+          }
+        },
+        {
+          "name": "Get Connector by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/connectors/{{connector_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "connectors", "{{connector_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Update Connector",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Updated description\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/connectors/{{connector_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "connectors", "{{connector_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Disable Connector",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/connectors/{{connector_id}}/disable",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "connectors", "{{connector_id}}", "disable"]
+            }
+          }
+        },
+        {
+          "name": "Enable Connector",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/connectors/{{connector_id}}/enable",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "connectors", "{{connector_id}}", "enable"]
+            }
+          }
+        },
+        {
+          "name": "Delete Connector",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/connectors/{{connector_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "connectors", "{{connector_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Statistics",
+      "item": [
+        {
+          "name": "Get All Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Connector Statistics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/connectors/{{connector_id}}/stats",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "connectors", "{{connector_id}}", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Connector Logs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/connectors/{{connector_id}}/logs?limit=50&offset=0",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "connectors", "{{connector_id}}", "logs"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "50"
+                },
+                {
+                  "key": "offset",
+                  "value": "0"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Testing",
+      "item": [
+        {
+          "name": "Test Connector",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"test_input\": {\n    \"text\": \"Sample input data\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/test/{{connector_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "test", "{{connector_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Quick Test Connector",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"test_input\": {\n    \"text\": \"Quick test\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/test/quick/{{connector_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "test", "quick", "{{connector_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Documentation",
+      "item": [
+        {
+          "name": "List All Documentation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/docs",
+              "host": ["{{base_url}}"],
+              "path": ["api", "docs"]
+            }
+          }
+        },
+        {
+          "name": "Get JSON Documentation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/docs/{{connector_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "docs", "{{connector_id}}"]
+            }
+          }
+        },
+        {
+          "name": "Get HTML Documentation",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/docs/{{connector_id}}/html",
+              "host": ["{{base_url}}"],
+              "path": ["api", "docs", "{{connector_id}}", "html"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Dynamic Connector Endpoints",
+      "item": [
+        {
+          "name": "Call Card Scanner",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"image_data\": \"data:image/jpeg;base64,/9j/4AAQSkZJRg...\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/connectors/card-scanner",
+              "host": ["{{base_url}}"],
+              "path": ["api", "connectors", "card-scanner"]
+            }
+          }
+        },
+        {
+          "name": "Call Article Writer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"topic\": \"Artificial Intelligence in 2024\",\n  \"tone\": \"professional\",\n  \"word_count\": 1500,\n  \"sections\": 5\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/connectors/article-writer",
+              "host": ["{{base_url}}"],
+              "path": ["api", "connectors", "article-writer"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "connector_id",
+      "value": "your-connector-id-here",
+      "type": "string"
+    }
+  ]
+}

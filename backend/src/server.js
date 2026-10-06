@@ -4,6 +4,12 @@ import dotenv from 'dotenv';
 import pool from './config/database.js';
 import { getAvailableProviders } from './providers/index.js';
 
+// Import routes
+import adminRoutes from './routes/admin.js';
+import apiRoutes from './routes/api.js';
+import docsRoutes from './routes/docs.js';
+import testRoutes from './routes/test.js';
+
 // Load environment variables
 dotenv.config();
 
@@ -20,7 +26,8 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 // Request logging middleware
 app.use((req, res, next) => {
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+  const timestamp = new Date().toISOString();
+  console.log(`[${timestamp}] ${req.method} ${req.path}`);
   next();
 });
 
@@ -79,13 +86,19 @@ app.get('/api/system', async (req, res) => {
     res.json({
       status: 'ok',
       service: {
-        name: 'Universal AI API Hub',
+        name: 'Universal AI API Connector & API Hub',
         version: '1.0.0',
         environment: process.env.NODE_ENV || 'development',
       },
       providers: {
         available: providers,
         count: providers.length,
+        configured: Object.fromEntries(
+          providers.map((provider) => [
+            provider,
+            Boolean(process.env[`${provider.toUpperCase()}_API_KEY`]),
+          ])
+        ),
       },
       database: {
         status: 'connected',
@@ -105,52 +118,78 @@ app.get('/api/system', async (req, res) => {
 });
 
 // ============================================
-// PLACEHOLDER ROUTES (To be implemented in Phase 2)
+// API ROUTES
 // ============================================
 
 /**
- * Admin API routes (CRUD connectors)
- * POST /api/admin/connectors
- * GET /api/admin/connectors
- * GET /api/admin/connectors/:id
- * PUT /api/admin/connectors/:id
- * DELETE /api/admin/connectors/:id
+ * Admin routes: /api/admin/*
+ * CRUD operations for connectors
  */
-app.get('/api/admin/connectors', async (req, res) => {
-  try {
-    const result = await pool.query(
-      'SELECT id, name, provider, model, status, created_at FROM connectors ORDER BY created_at DESC'
-    );
-    res.json({
-      success: true,
-      data: result.rows,
-      count: result.rows.length,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      error: err.message,
-    });
-  }
-});
+app.use('/api/admin', adminRoutes);
 
 /**
- * Get connector stats
- * GET /api/stats
+ * Connector test routes: /api/admin/test/*
+ * Test connectors from admin interface
  */
-app.get('/api/stats', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM connector_stats ORDER BY total_requests DESC');
-    res.json({
-      success: true,
-      data: result.rows,
-    });
-  } catch (err) {
-    res.status(500).json({
-      success: false,
-      error: err.message,
-    });
-  }
+app.use('/api/admin/test', testRoutes);
+
+/**
+ * Documentation routes: /api/docs/*
+ * Auto-generated API documentation
+ */
+app.use('/api/docs', docsRoutes);
+
+/**
+ * Dynamic API routes: /api/connectors/*
+ * Generated connector endpoints
+ */
+app.use('/api/connectors', apiRoutes);
+
+// ============================================
+// DEFAULT ROUTES
+// ============================================
+
+/**
+ * API root - list all available endpoints
+ * GET /api
+ */
+app.get('/api', (req, res) => {
+  res.json({
+    success: true,
+    service: 'Universal AI API Hub',
+    version: '1.0.0',
+    endpoints: {
+      system: {
+        'GET /health': 'Health check',
+        'GET /api/db-test': 'Database connection test',
+        'GET /api/system': 'System information',
+      },
+      admin: {
+        'POST /api/admin/connectors': 'Create connector',
+        'GET /api/admin/connectors': 'List all connectors',
+        'GET /api/admin/connectors/:id': 'Get connector details',
+        'PUT /api/admin/connectors/:id': 'Update connector',
+        'DELETE /api/admin/connectors/:id': 'Delete connector',
+        'POST /api/admin/connectors/:id/disable': 'Disable connector',
+        'POST /api/admin/connectors/:id/enable': 'Enable connector',
+        'GET /api/admin/connectors/:id/stats': 'Get connector statistics',
+        'GET /api/admin/connectors/:id/logs': 'Get connector request logs',
+        'GET /api/admin/stats': 'Get all statistics',
+      },
+      testing: {
+        'POST /api/admin/test/:connector_id': 'Test a connector',
+        'POST /api/admin/test/quick/:connector_id': 'Quick test (no logging)',
+      },
+      documentation: {
+        'GET /api/docs': 'List all documentation',
+        'GET /api/docs/:id': 'Get JSON documentation',
+        'GET /api/docs/:id/html': 'Get HTML documentation',
+      },
+      dynamic: {
+        'POST /api/connectors/:endpoint': 'Call generated connector endpoint',
+      },
+    },
+  });
 });
 
 // ============================================
@@ -162,15 +201,9 @@ app.get('/api/stats', async (req, res) => {
  */
 app.use((req, res) => {
   res.status(404).json({
-    status: 'error',
-    message: `Route not found: ${req.method} ${req.path}`,
-    availableEndpoints: [
-      'GET /health',
-      'GET /api/db-test',
-      'GET /api/system',
-      'GET /api/admin/connectors',
-      'GET /api/stats',
-    ],
+    success: false,
+    error: `Route not found: ${req.method} ${req.path}`,
+    hint: 'Visit GET /api to see all available endpoints',
   });
 });
 
@@ -180,9 +213,9 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error('❌ Server error:', err);
   res.status(500).json({
-    status: 'error',
-    message: 'Internal Server Error',
-    error: process.env.NODE_ENV === 'development' ? err.message : undefined,
+    success: false,
+    error: 'Internal Server Error',
+    message: process.env.NODE_ENV === 'development' ? err.message : undefined,
   });
 });
 
