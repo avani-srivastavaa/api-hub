@@ -3,13 +3,13 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Copy package files
-COPY backend/package*.json ./
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
 # Copy application code
-COPY backend/src ./src
+COPY src ./src
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs
